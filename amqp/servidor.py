@@ -11,13 +11,15 @@ def receber_dados():
     parameters = pika.ConnectionParameters(host=BROKER_HOST)
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
-    channel.queue_declare(queue='cliente')
+    channel.queue_declare(queue='servidor')
     
     def callback(ch, method, properties, body):
         print(" [x] Received %r" % body)
+        if body == "EOF":
+            ch.close()
     
-    channel.basic_consume(queue='cliente', on_message_callback=callback, auto_ack=True)
-    print(' [*] Waiting for messages. To exit press CTRL+C')
+    channel.basic_consume(queue='servidor', on_message_callback=callback, auto_ack=True)
+    print(' [*] Waiting for messages.')
     try:
         channel.start_consuming()
     except KeyboardInterrupt:
@@ -30,11 +32,10 @@ recebedor.start()
 parameters = pika.ConnectionParameters(host=BROKER_HOST)
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
-channel.queue_declare(queue='servidor')
+channel.queue_declare(queue='cliente')
 
 def enviar_dados(payload):
-    channel.basic_publish(exchange='', routing_key='servidor', body=payload)
-    print(f" [x] Sent {payload}")
+    channel.basic_publish(exchange='', routing_key='cliente', body=payload)
 
 def sair():
     connection.close()
