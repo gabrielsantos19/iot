@@ -1,3 +1,5 @@
+""""https://aiocoap.readthedocs.io/en/latest/examples.html"""
+
 import logging
 import asyncio
 
@@ -16,12 +18,11 @@ async def main():
     await asyncio.sleep(2)
 
     payload = b"The quick brown fox jumps over the lazy dog.\n" * 30
-    request = Message(code=PUT, payload=payload, uri="coap://172.17.0.2/other/block")
+    request = Message(code=PUT, payload=payload, uri="coap://localhost/other/block")
 
     response = await context.request(request).response
 
     print('Result: %s\n%r'%(response.code, response.payload))
 
 if __name__ == "__main__":
-    #asyncio.get_event_loop().run_forever()    
     asyncio.run(main())

@@ -1,3 +1,5 @@
+""""https://aiocoap.readthedocs.io/en/latest/examples.html"""
+
 import logging
 import asyncio
 
@@ -8,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 async def main():
     protocol = await Context.create_client_context()
 
-    request = Message(code=GET, uri='coap://172.17.0.2/time')
+    request = Message(code=GET, uri='coap://localhost/time')
 
     try:
         response = await protocol.request(request).response
@@ -20,4 +22,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-    #asyncio.get_event_loop().run_forever(main())
