@@ -5,7 +5,7 @@ def get_linha():
     limite_inferior = ord('a')
     limite_superior = ord('z')
     r = range(limite_inferior, limite_superior)
-    c = random.choices(r, k=255)
+    c = random.choices(r, k=200)
     linha = ''.join([chr(x) for x in c])
     return linha
 

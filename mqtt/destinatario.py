@@ -1,6 +1,7 @@
 """"https://github.com/eclipse/paho.mqtt.python"""
 
 import paho.mqtt.client as mqtt
+import time
 
 
 BROKER_HOST = "192.168.56.1"
@@ -19,7 +20,8 @@ def on_disconnect(client, userdata, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    print(str(msg.payload))
+    t = time.time_ns()
+    print(f"{t} {msg.payload}")
     # Encerrar aplicação ao receber mensagem final
     if msg.payload == b'FINALIZAR\n':
         print("FIM")
