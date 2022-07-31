@@ -15,14 +15,25 @@ def on_connect(client, userdata, flags, rc):
     #client.subscribe("$SYS/#")
     client.subscribe("servidor/#")
 
+
+def on_disconnect(client, userdata, rc):
+    print(f"Disconnected with result code {rc}")
+
+
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
+    client.publish("cliente/x", msg.payload)
+    # Encerrar aplicação ao receber mensagem final
+    if msg.payload == b'FINALIZAR\n':
+        print("FIM")
+        client.disconnect()
+
 
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-
+client.on_disconnect = on_disconnect
 client.connect(HOST, PORT, 60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
@@ -30,7 +41,3 @@ client.connect(HOST, PORT, 60)
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
 client.loop_forever()
-
-#client.loop_start()
-#client.loop_stop(force=False)
-#client.publish("gabriel/3", "EOF")
