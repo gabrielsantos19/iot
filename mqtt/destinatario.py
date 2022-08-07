@@ -39,4 +39,6 @@ try:
     client.connect(BROKER_HOST, BROKER_PORT, 60)
     client.loop_forever()
 except KeyboardInterrupt:
+    pass
+finally:
     log_file.close()

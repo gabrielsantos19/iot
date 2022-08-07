@@ -41,3 +41,5 @@ try:
     client.loop_forever()
 except KeyboardInterrupt:
     pass
+finally:
+    log_file.close()
