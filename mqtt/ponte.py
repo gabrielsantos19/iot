@@ -1,12 +1,18 @@
-""""https://github.com/eclipse/paho.mqtt.python"""
+"""
+Autor: Gabriel Oliveira Santos
+Referência: https://github.com/eclipse/paho.mqtt.python
+"""
 
 import paho.mqtt.client as mqtt
 import time
 
 
+CENARIO = 6
+
 BROKER_HOST = "192.168.56.1"
 BROKER_PORT = 1883
-LOG_FILE = "ponte.csv"
+LOG_FILE = f"../_logs/mqtt_ponte_cenario_{CENARIO}_{time.strftime('%Y-%m-%d-%H-%M-%S')}.csv"
+
 
 log_file = open(LOG_FILE, "w")
 contador = 0
@@ -27,12 +33,14 @@ def on_message(client, userdata, msg):
     global contador
     t = time.time_ns()
     payload = msg.payload.decode("utf-8")
-    print(f"{contador},{t},{payload}", file=log_file)
+    print(f"{contador:04},{t},{payload}", file=log_file)
     client.publish("destinatario/x", msg.payload)
     contador += 1
 
 
 try:
+    print(f'CENARIO={CENARIO}')
+
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message

@@ -1,49 +1,39 @@
 """
 Autor: Gabriel Oliveira Santos
-Referência: https://github.com/eclipse/paho.mqtt.python
 """
 
-import paho.mqtt.client as mqtt
+import requests
 import time
 
 
 CENARIO = 6
 INTERVALO = 40    # em milissegundos
 
-BROKER_HOST = "192.168.56.1"
-BROKER_PORT = 1883
-LOG_FILE = f"../_logs/mqtt_remetente_cenario_{CENARIO}_{time.strftime('%Y-%m-%d-%H-%M-%S')}.csv"
+PONTE_HOST = "192.168.56.1"
+PONTE_PORT = 5000
 ARQUIVO_TESTE = f"../_arquivos_teste/cenario_{CENARIO}.txt"
-INTERVALO_NS = INTERVALO * 1000000    # Converter para segundo
+LOG_FILE = f"../_logs/http_remetente_cenario_{CENARIO}_{time.strftime('%Y-%m-%d-%H-%M-%S')}.csv"
+PONTE = f"http://{PONTE_HOST}:{PONTE_PORT}"
+INTERVALO_NS = INTERVALO * 1000000
 
 
 log_file = open(LOG_FILE, "w")
 
 
-# The callback for when the client receives a CONNACK response from the server.
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-    
-
 try:
     print(f'CENARIO={CENARIO}')
     print(f'INTERVALO={INTERVALO}')
     
-    client = mqtt.Client()
-    client.on_connect = on_connect
-    client.connect(BROKER_HOST, BROKER_PORT, 60)
-    client.loop_start()
-
     contador = 0
     t = time.time_ns()
     print(f"INICIO,{t}")
     with open(ARQUIVO_TESTE, "r") as f:
         for l in f.readlines():
-            l = l[:-1]    # Remover o \n do final da linha
+            l = l[:-1]    # Remover o \n no final da linha
             t = time.time_ns()
             m = f"{contador:04},{t},{l}"
             e = m.encode("utf-8")
-            client.publish("ponte/x", m)
+            requests.post(PONTE, {'p':m})
             print(contador)
             print(m, file=log_file)
             contador += 1
@@ -56,7 +46,6 @@ try:
     time.sleep(5)
     t = time.time_ns()
     print(f"FIM,{t}")
-    client.loop_stop(force=False)
 except KeyboardInterrupt:
     pass
 finally:
